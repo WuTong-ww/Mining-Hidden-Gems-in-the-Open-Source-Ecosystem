@@ -48,7 +48,7 @@ def analyze_text(text, topics):
 
     keyword_count = sum([lemmatized_tokens.count(keyword) for keyword in unique_keywords])
     total_word_count = len(lemmatized_tokens)
-    innovation_score = round((keyword_count / total_word_count) * 1000, 4) if total_word_count > 0 else 0
+    innovation_score = round((keyword_count / total_word_count) * 10000, 4) if total_word_count > 0 else 0
 
     return innovation_score
 
