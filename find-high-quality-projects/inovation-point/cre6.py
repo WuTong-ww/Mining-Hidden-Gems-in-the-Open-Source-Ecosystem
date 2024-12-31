@@ -11,13 +11,12 @@ import time
 from langdetect import detect
 
 # GitHub Personal Access Token (可选，提高速率限制)
-GITHUB_ACCESS_TOKEN = "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"
+GITHUB_ACCESS_TOKEN = ""
 GITHUB_HEADERS = {"Authorization": f"Bearer {GITHUB_ACCESS_TOKEN}"} if GITHUB_ACCESS_TOKEN else {}
 
 # Gitee相关配置
-GITEE_ACCESS_TOKEN = "3fee73567ae04775e3e1ea4f122d394c"
+GITEE_ACCESS_TOKEN = ""
 GITEE_HEADERS = {"Authorization": f"token {GITEE_ACCESS_TOKEN}", "Content-Type": "application/json"}
-
 
 # 下载 NLTK 数据
 def download_nltk_data():
@@ -52,7 +51,7 @@ def download_nltk_data():
 
 # 确保所有必要的NLTK数据都已下载
 download_nltk_data()
-
+nltk.download('punkt_tab')
 
 # 定义获取GitHub仓库README和标签的函数
 def get_github_repo_info(org, repo):
@@ -130,47 +129,58 @@ def analyze_text(text, topics):
         print(f"语言检测失败: {e}")
         language = "en"  # 默认英语
 
-    # 英文的关键词
-    english_keywords = ["innovation", "new", "cutting-edge", "novel", "revolutionary"]
-    # 中文的关键词
-    chinese_keywords = ["创新", "新", "前沿", "革命性", "新颖"]
-    # 德语的关键词
-    german_keywords = ["Innovation", "neu", "bahnbrechend", "neuartig", "revolutionär"]
-    # 法语的关键词
-    french_keywords = ["innovation", "nouveau", "de pointe", "révolutionnaire", "novateur"]
-    # 西班牙语的关键词
-    spanish_keywords = ["innovación", "nuevo", "de vanguardia", "revolucionario", "nuevo"]
-    # 俄语的关键词
-    russian_keywords = ["инновация", "новый", "передовой", "революционный", "новаторский"]
+    # 语言和关键词的映射表
+    LANGUAGE_KEYWORDS = {
+        "en": ["innovation", "new", "cutting-edge", "novel", "revolutionary"],
+        "sk": ["inovácia", "nový", "prielomový", "nový", "revolučný"],
+        "ja": ["革新", "新しい", "最先端", "新規", "革命的"],
+        "es": ["innovación", "nuevo", "de vanguardia", "revolucionario", "nuevo"],
+        "de": ["Innovation", "neu", "bahnbrechend", "neuartig", "revolutionär"],
+        "it": ["innovazione", "nuovo", "avanzato", "rivoluzionario", "nuovo"],
+        "pt": ["inovação", "novo", "avançado", "revolucionário", "novo"],
+        "hu": ["innováció", "új", "úttörő", "forradalmi", "új"],
+        "hi": ["नवोन्मेष", "नया", "कटिंग-एज", "क्रांतिकारी", "नवीन"],
+        "fi": ["innovaatio", "uusi", "huipputeknologia", "uudistava", "revolutionäärinen"],
+        "sv": ["innovation", "ny", "banbrytande", "ny", "revolutionerande"],
+        "nl": ["innovatie", "nieuw", "doorbraak", "nieuw", "revolutionair"],
+        "zh": ["创新", "新", "前沿", "革命性", "新颖"],
+        "fr": ["innovation", "nouveau", "de pointe", "révolutionnaire", "novateur"],
+        "pl": ["innowacja", "nowy", "przełomowy", "rewolucyjny", "nowy"],
+        "et": ["innovatsioon", "uus", "tipptasemel", "revolutsiooniline", "uus"],
+        "hr": ["inovacija", "novi", "prekretnica", "revolucionaran", "novi"],
+        "da": ["innovation", "ny", "banebrydende", "ny", "revolutionær"],
+        "lb": ["Innovation", "nei", "bahnbrechend", "neuartig", "revolutionär"],
+        "el": ["καινοτομία", "νέο", "πρωτοποριακό", "επανάσταση", "νέο"],
+        "ru": ["инновация", "новый", "передовой", "революционный", "новаторский"],
+        "id": ["inovasi", "baru", "terdepan", "revolusioner", "baru"],
+        "ro": ["inovație", "nou", "de vârf", "revoluționar", "nou"],
+        "bg": ["иновация", "нов", "революционен", "новаторски", "нов"],
+        "sl": ["inovacija", "nov", "prelomni", "revolucionaren", "nov"],
+        "lv": ["inovācija", "jauns", "pārrāvuma", "revolucionārs", "jauns"],
+        "mt": ["innovazzjoni", "ġdid", "avvanzat", "rivoluzzjonarju", "ġdid"],
+        "th": ["นวัตกรรม", "ใหม่", "ทันสมัย", "ปฏิวัติ", "แปลกใหม่"]
+    }
 
     # 合并文本和标签
     all_text = text + " ".join(topics)
 
     # 根据语言选择关键词
-    if language == "en":
-        keywords = english_keywords
-    elif language == "zh":
-        keywords = chinese_keywords
-    elif language == "de":
-        keywords = german_keywords
-    elif language == "fr":
-        keywords = french_keywords
-    elif language == "es":
-        keywords = spanish_keywords
-    elif language == "ru":
-        keywords = russian_keywords
-    else:
-        keywords = english_keywords + chinese_keywords + german_keywords + french_keywords + spanish_keywords + russian_keywords  # 如果是其他语言，混合使用
+    keywords = LANGUAGE_KEYWORDS.get(language, LANGUAGE_KEYWORDS["en"])  # 默认英语
 
     # 词汇处理
     tokens = word_tokenize(all_text.lower())
-    stop_words = set(stopwords.words('english')) if language == "en" else set()
+    # 根据不同语言选择停用词
+    stop_words = set(stopwords.words(language)) if language in stopwords.fileids() else set(stopwords.words('english'))
+
     filtered_tokens = [token for token in tokens if token.isalpha() and token not in stop_words]
     lemmatizer = WordNetLemmatizer()
     lemmatized_tokens = [lemmatizer.lemmatize(token) for token in filtered_tokens]
 
+    # 计算创新关键词出现的次数
     keyword_count = sum([lemmatized_tokens.count(keyword) for keyword in keywords])
     total_word_count = len(lemmatized_tokens)
+
+    # 计算创新得分
     innovation_score = round((keyword_count / total_word_count) * 10000, 4) if total_word_count > 0 else 0
 
     return innovation_score
@@ -210,7 +220,7 @@ def process_repo(org, repo, platform, counter):
 
 # 主函数
 def main():
-    csv_file_path = '../point/cold_repositories.csv'
+    csv_file_path = 'cold/cold_repositories.csv'
     output_file_path_innovation = 'repo_innovation_scores.csv'
     output_file_path_readme = 'repo_readme_contents.csv'
 
