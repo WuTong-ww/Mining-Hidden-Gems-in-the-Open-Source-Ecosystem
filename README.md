@@ -72,8 +72,29 @@
     - [activity-point](/Score/activity-point)：活跃度得分
     - [complexity-point](/Score/complexity-point)：复杂度得分
     - [inovation-point](/Score/inovation-point)：创新性得分
-    - [popularity-score](/Score/popularity-score)：流行度得分
+    - [popularity-score](/Score/popularity-score)：知名度得分
 - [templates](/templates)：展示网页
+
+## :100: 分析逻辑
+
+### 知名度得分计算公式
+
+知名度得分 = **(a * log(Stars + 1) + b * log(Forks + 1)) / (1 + c * (Stars + Forks))**
+
+#### 参数说明：
+
+- **a**: Star数的权重，决定Star对知名度得分的影响。
+- **b**: Fork数的权重，决定Fork对知名度得分的影响。
+- **c**: 总数（Star + Fork）的惩罚项系数，避免Star或Fork数过大导致得分过大。
+
+#### 公式解释：
+
+- **log(Stars + 1)** 和 **log(Forks + 1)**：对数变换有助于减轻较大值（例如Stars为几万或Forks为几千时）的影响，从而避免它们过度拉高最终得分。加1是为了避免对数计算时出现负数或者零的情况。
+  
+- **a * log(Stars + 1) + b * log(Forks + 1)**：这个部分是基础得分计算，Stars和Forks对得分的影响由a和b两个权重控制。如果Stars被认为比Forks重要，可以将a设为大于b的值，反之亦然。
+
+- **(1 + c * (Stars + Forks))**：这是一个归一化的惩罚项，主要用于减少过度影响大的仓库（例如，Stars + Forks 非常大的仓库）对得分的影响。c值的设定会影响得分的平滑度，c值越大，过大的Stars和Fork数量对得分的影响越小。
+
 
 
 ## :rocket: 运行
