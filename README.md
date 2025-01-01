@@ -4,6 +4,9 @@
 
 通过对开源项目的多维数据分析，挖掘那些质量高、创新性强但关注度较低的“冷门宝藏”项目，分析其受限原因，并提出提升曝光度的建议。
 
+![展示图](img/523302cff15b31b2d2219f1b8d7c892.png)
+![展示图2](img/38be1b8c2e79bb1b3151cc617b6fe60.png)
+
 ## :hand_with_index_finger_and_thumb_crossed: 项目成员
 
 - 吴彤[@WuTong-ww](https://github.com/WuTong-ww)：
@@ -187,6 +190,13 @@ LANGUAGE_KEYWORDS = {
     ...
 }
 ```
+
+## :sparkles: 生成结果报告和建议
+
+- 调用Gpt2自动生成readme的改进意见
+
+![展示图3](img/2f6a12c1ba15c5aef5b24345621531e.png)
+
 
 ## :rocket: 运行
 
