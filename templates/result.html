@@ -12,7 +12,7 @@
             font-family: 'Poppins', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: url('{{ wordcloud_path }}') no-repeat center center fixed; /* 铺满词云背景 */
+            background: url('{{ wordcloud_path }}') no-repeat center fixed; /* 铺满词云背景 */
             background-size: cover;
             color: #333;
             display: flex;
@@ -83,6 +83,19 @@
             color: #d1406f; /* 深粉色 */
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* 更明显的阴影效果 */
         }
+        button {
+            background: #ff9a9e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #ff6f6f;
+        }
     </style>
 </head>
 <body>
@@ -97,13 +110,19 @@
                 <h3>仓库链接：</h3>
                 <p><a href="{{ repo_url }}" target="_blank">{{ repo_url }}</a></p>
             </div>
+
             <div class="result-section">
                 <h3>来源网站：</h3>
                 <p>{{ repo_source }}</p>
             </div>
             <div class="result-section">
                 <h3>评分详情：</h3>
-                <p>{{ analysis_result }}</p>
+                <ul>
+                    <li>创新性评分: {{ innovation }}</li>
+                    <li>复杂度评分: {{ complexity }}</li>
+                    <li>受欢迎度评分: {{ popularity }}</li>
+                    <li>加权总分: {{ weighted_score }}</li>
+                </ul>
             </div>
             <div class="result-section">
                 <h3>冷门原因分析：</h3>
@@ -113,6 +132,26 @@
                 <h3>发展建议：</h3>
                 <p>{{ optimization_suggestions }}</p>
             </div>
+            <!-- 生成分析表单 -->
+<!--            <h2>生成分析：</h2>-->
+<!--            <form action="/generate_analysis" method="POST">-->
+<!--                <input type="hidden" name="repo_name" value="{{ repo_name }}">-->
+<!--                <input type="hidden" name="repo_readme" value="{{ repo_readme }}">-->
+<!--                <input type="hidden" name="complexity" value="{{ complexity }}">-->
+<!--                <input type="hidden" name="innovation" value="{{ innovation }}">-->
+<!--                <input type="hidden" name="popularity" value="{{ popularity }}">-->
+<!--            </form>-->
+             <div id="result-container" class="result-container" style="display: none;">
+        <!-- 分析结果将在这里显示 -->
+                <h2>分析结果</h2>
+                <p id="analysis-result">正在生成，请稍候...</p>
+            </div>
+
+            <!-- 显示生成的分析结果 -->
+            {% if analysis_result %}
+            <h2>分析结果：</h2>
+            <pre>{{ analysis_result }}</pre>
+            {% endif %}
 
             <!-- 检查词云是否生成 -->
             {% if wordcloud_path %}
@@ -167,4 +206,3 @@
     </script>
 </body>
 </html>
-
