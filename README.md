@@ -56,12 +56,25 @@
 │  └─popularity-score
 │          popularity_score.py
 │          popu_scores.csv
-│          
+│         
+├─screen_data
+│       datawash.py
+│       repo_readme_contents.csv
+│       source.csv
+│       total.csv
+│    
+├─static
+│  ├─fonts
+│  │       simhei.ttf
+│  │
+│  └─style.css
+│
 └─templates
         index.html
         result.html
 
 ```
+
 ### 文件结构介绍
 - [app.py](/app.py)：后端文件
 - [开源系统中的“冷门宝藏”挖掘.pptx](/开源系统中的“冷门宝藏”挖掘.pptx)：初赛ppt
@@ -73,7 +86,14 @@
     - [complexity-point](/Score/complexity-point)：复杂度得分
     - [inovation-point](/Score/inovation-point)：创新性得分
     - [popularity-score](/Score/popularity-score)：知名度得分
+- [screen_data](/screen_data)：网页所需数据
+    - [repo_readme_contents](/screen_data/repo_readme_contents)：样本仓库readme内容
+    - [source](/screen_data/source)：样本仓库来源网站
+    - [total](/screen_data/tatol)：综合评分
+- [static](/static)：静态数据
+    - [fonts](/static/fonts)：存放词云图所需字体
 - [templates](/templates)：展示网页
+
 
 ## :100: 分析逻辑
 
