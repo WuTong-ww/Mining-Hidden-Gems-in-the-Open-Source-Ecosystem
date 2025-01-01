@@ -193,6 +193,10 @@ LANGUAGE_KEYWORDS = {
 
 ## :sparkles: 生成结果报告和建议
 
+- 根据readme生成词云图
+
+![展示图4](img/a762faddb2da8b1c5c735b5dccd6a82.png)
+
 - 调用Gpt2自动生成readme的改进意见
 
 ![展示图3](img/2f6a12c1ba15c5aef5b24345621531e.png)
