@@ -83,6 +83,7 @@
             color: #d1406f; /* 深粉色 */
             text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* 更明显的阴影效果 */
         }
+
         button {
             background: #ff9a9e;
             color: white;
@@ -96,6 +97,27 @@
         button:hover {
             background: #ff6f6f;
         }
+
+        /* 动态建议部分样式 */
+        .result-dynamic-section {
+            margin-top: 20px;
+            background: #e0f7e9; /* 浅绿背景 */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-dynamic-section h3 {
+            font-size: 1.5rem;
+            color: #2e7d32;
+        }
+
+        .result-dynamic-section pre {
+            font-size: 1rem;
+            line-height: 1.6;
+            white-space: pre-wrap; /* 换行处理 */
+            word-wrap: break-word;
+        }
     </style>
 </head>
 <body>
@@ -105,7 +127,7 @@
     <div class="result-container">
         <!-- 内容部分 -->
         <div class="result-content">
-            <h1 class="result-title">分析结果</h1>
+            <h1 class="result-title">生成建议：</h1>
             <div class="result-section">
                 <h3>仓库链接：</h3>
                 <p><a href="{{ repo_url }}" target="_blank">{{ repo_url }}</a></p>
@@ -132,25 +154,13 @@
                 <h3>发展建议：</h3>
                 <p>{{ optimization_suggestions }}</p>
             </div>
-            <!-- 生成分析表单 -->
-<!--            <h2>生成分析：</h2>-->
-<!--            <form action="/generate_analysis" method="POST">-->
-<!--                <input type="hidden" name="repo_name" value="{{ repo_name }}">-->
-<!--                <input type="hidden" name="repo_readme" value="{{ repo_readme }}">-->
-<!--                <input type="hidden" name="complexity" value="{{ complexity }}">-->
-<!--                <input type="hidden" name="innovation" value="{{ innovation }}">-->
-<!--                <input type="hidden" name="popularity" value="{{ popularity }}">-->
-<!--            </form>-->
-             <div id="result-container" class="result-container" style="display: none;">
-        <!-- 分析结果将在这里显示 -->
-                <h2>分析结果</h2>
-                <p id="analysis-result">正在生成，请稍候...</p>
-            </div>
 
-            <!-- 显示生成的分析结果 -->
+            <!-- 显示生成的动态分析结果 -->
             {% if analysis_result %}
-            <h2>分析结果：</h2>
-            <pre>{{ analysis_result }}</pre>
+            <div class="result-dynamic-section">
+                <h3>GPT-2 动态建议：</h3>
+                <pre>{{ analysis_result }}</pre>
+            </div>
             {% endif %}
 
             <!-- 检查词云是否生成 -->
