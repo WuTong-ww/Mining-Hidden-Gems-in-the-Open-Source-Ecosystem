@@ -1,0 +1,139 @@
+/* body 背景样式 */
+body {
+    font-family: 'Poppins', Arial, sans-serif; /* 替换为圆润字体 */
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #ffdee9, #b5fffc, #ffeebb, #d4a5ff); /* 马克龙配色渐变 */
+    background-size: 400% 400%; /* 设置渐变移动范围 */
+    animation: gradientBG 10s ease infinite; /* 添加背景渐变动画 */
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden; /* 防止背景溢出 */
+    position: relative; /* 为伪元素定位提供基础 */
+}
+
+/* 添加背景渐变动画 */
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 左侧和右侧链接样式 */
+.links {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 150px;
+    background-color: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+    max-height: 80%;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.left-links {
+    left: 20px;
+}
+
+.right-links {
+    right: 20px;
+}
+
+.links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.links ul li {
+    margin: 5px 0;
+}
+
+.links ul li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+}
+
+.links ul li a:hover {
+    color: #007BFF;
+    text-decoration: underline;
+}
+
+/* 容器样式 */
+.container {
+    background-color: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 浅色阴影 */
+    width: 90%;
+    max-width: 800px;
+    margin: 20px 0;
+    color: #333; /* 深色字体 */
+}
+
+/* 表单样式 */
+input[type="text"], select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 16px;
+    background-color: #f9f9f9; /* 浅色背景 */
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4); /* 按钮渐变颜色 */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #fbc2eb, #a6c1ee); /* 按钮悬停颜色 */
+    transform: scale(1.05);
+}
+
+/* 分析页面样式 */
+.result-container {
+    border: 2px solid #ff9a9e; /* 边框颜色与马克龙配色一致 */
+    padding: 20px; /* 内边距，保持内容间距 */
+    margin: 20px 0; /* 外边距 */
+    border-radius: 12px; /* 圆角 */
+    background-color: rgba(255, 255, 255, 0.9); /* 半透明背景 */
+    color: #333; /* 深色字体 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 浅色阴影 */
+    width: 90%;
+    max-width: 800px; /* 最大宽度 */
+    min-height: 600px; /* 最小高度 */
+    display: flex; /* 弹性布局 */
+    flex-direction: column; /* 垂直排列内容 */
+    align-items: center; /* 居中对齐内容 */
+}
+
+/* 图表容器样式 */
+.charts {
+    width: 90%;
+    max-width: 800px;
+    margin: 20px auto;
+    background: #ffffff; /* 白色背景 */
+    border-radius: 12px; /* 圆角 */
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+}
+
+canvas {
+    max-width: 100%;
+}
