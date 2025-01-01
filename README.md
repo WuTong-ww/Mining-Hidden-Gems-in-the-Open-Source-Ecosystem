@@ -16,6 +16,7 @@
 冷门宝藏挖掘/
 │  app.py
 │  README.md
+│  save.py
 │  开源系统中的“冷门宝藏”挖掘.pptx
 │  
 ├─Cold_Rep
@@ -56,27 +57,31 @@
 │  └─popularity-score
 │          popularity_score.py
 │          popu_scores.csv
-│         
+│          
 ├─screen_data
-│       datawash.py
-│       repo_readme_contents.csv
-│       source.csv
-│       total.csv
-│    
+│      datawash.py
+│      repo_readme_contents.csv
+│      source.csv
+│      total.csv
+│      
 ├─static
-│  ├─fonts
-│  │       simhei.ttf
-│  │
-│  └─style.css
-│
-└─templates
-        index.html
-        result.html
-
+│  │  style.css
+│  │  
+│  └─fonts
+│          simhei.ttf
+│          
+├─templates
+│      index.html
+│      result.html
+│      
+└─复赛
+        开源生态系统中的 “冷门宝藏” 挖掘项目.pptx        
 ```
 
 ### 文件结构介绍
 - [app.py](/app.py)：后端文件
+- [save.py](/save.py)：下载大模型的代码
+- [复赛](/复赛):复赛ppt
 - [开源系统中的“冷门宝藏”挖掘.pptx](/开源系统中的“冷门宝藏”挖掘.pptx)：初赛ppt
 - [Cold_Rep](/Cold_Rep)：冷门仓库搜索
 - [Reason](/Reason)：冷门原因分析
@@ -185,6 +190,28 @@ LANGUAGE_KEYWORDS = {
 
 ## :rocket: 运行
 
+### 克隆此仓库到本地：
+
+```bash
+git clone https://github.com/WuTong-ww/Mining-Hidden-Gems-in-the-Open-Source-Ecosystem.git
+```
+
+### 将大模型缓存到本地:
+```python
+python save.py
+```
+
+### 安装依赖:
+
+请确保你的环境中已安装 `transformers` 库。你可以使用以下命令进行安装：
+
+```bash
+pip install transformers
+```
+### 启动后端：
 ```python
 python app.py
 ```
+### 打开浏览器：
+访问`http://127.0.0.1:5000/`，你将看到主页。
+点击页面上的链接或选择仓库，查看分析结果。
