@@ -3,58 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ repo_name }} - 冷门分析报告</title>
+    <title>分析结果</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* 设置 body 的背景为词云图 */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background: url('{{ wordcloud_path }}') no-repeat center center fixed; /* 铺满词云背景 */
+            background-size: cover;
+            color: #333;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
+            overflow-x: hidden;
+            position: relative;
         }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            width: 600px;
-            max-width: 90%;
-        }
-        h1 {
-            text-align: center;
-        }
-        .analysis {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        button {
+
+        /* 添加马卡龙渐变层覆盖在词云背景上 */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 222, 233, 0.7), rgba(181, 255, 252, 0.7), rgba(255, 238, 187, 0.7), rgba(212, 165, 255, 0.7));
+            z-index: 0;
+            animation: gradientBG 10s ease infinite; /* 渐变动画 */
+            pointer-events: none; /* 防止遮挡点击操作 */
         }
-        button:hover {
-            background-color: #45a049;
+
+        /* 背景渐变动画 */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* result-container 样式 */
+        .result-container {
+            position: relative;
+            background: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
+            border: 2px solid #ff9a9e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            color: #333;
+            width: 90%;
+            max-width: 800px;
+            min-height: 600px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        /* 图表容器样式 */
+        .charts {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            background: #ffffff; /* 白色背景 */
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        canvas {
+            max-width: 100%;
+        }
+
+        /* 大标题样式 */
+        .repo-title {
+            font-size: 3rem; /* 大标题字体大小 */
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: #d1406f; /* 深粉色 */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* 更明显的阴影效果 */
         }
     </style>
 </head>
 <body>
+    <!-- 仓库名称作为大标题 -->
+    <h1 class="repo-title">{{ repo_name }}</h1>
 
-    <div class="container">
-        <h1>仓库：{{ repo_name }} 的冷门分析报告</h1>
-        <div class="analysis">
-            <h3>分析结果：</h3>
-            <p>{{ analysis_result }}</p>
+    <div class="result-container">
+        <!-- 内容部分 -->
+        <div class="result-content">
+            <h1 class="result-title">分析结果</h1>
+            <div class="result-section">
+                <h3>仓库链接：</h3>
+                <p><a href="{{ repo_url }}" target="_blank">{{ repo_url }}</a></p>
+            </div>
+            <div class="result-section">
+                <h3>来源网站：</h3>
+                <p>{{ repo_source }}</p>
+            </div>
+            <div class="result-section">
+                <h3>评分详情：</h3>
+                <p>{{ analysis_result }}</p>
+            </div>
+            <div class="result-section">
+                <h3>冷门原因分析：</h3>
+                <p>{{ cold_reasons }}</p>
+            </div>
+            <div class="result-section">
+                <h3>发展建议：</h3>
+                <p>{{ optimization_suggestions }}</p>
+            </div>
+
+            <!-- 检查词云是否生成 -->
+            {% if wordcloud_path %}
+            <div class="result-section">
+                <h3>词云背景说明：</h3>
+                <p>词云背景基于此仓库的 README 内容生成。</p>
+            </div>
+            {% else %}
+            <div class="result-section">
+                <h3>词云背景说明：</h3>
+                <p style="color: red;">未找到 README 内容，无法生成词云。</p>
+            </div>
+            {% endif %}
+
+            <!-- 柱状图 -->
+            <div class="charts">
+                <h2>分数柱状图</h2>
+                <canvas id="barChart"></canvas>
+            </div>
         </div>
-        <br>
-        <button onclick="window.history.back()">返回</button>
     </div>
 
+    <script>
+        // 获取评分数据（从后端传递的变量）
+        const scores = {{ scores | tojson }};
+        const labels = ['Complexity', 'Innovation', 'Popularity'];
+        const values = [scores.complexity, scores.innovation, scores.popularity];
+
+        // 初始化柱状图
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '评分',
+                    data: values,
+                    backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+                    borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
+

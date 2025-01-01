@@ -3,56 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>仓库冷门分析工具</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
+    <title>“冷门宝藏”挖掘分析</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function setRepoName(selectElement) {
+            const repoNameInput = document.getElementById('repo_name');
+            repoNameInput.value = selectElement.value; // 自动填充选中的仓库名
         }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            width: 400px;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+    </script>
 </head>
 <body>
-
     <div class="container">
-        <h1>仓库冷门分析</h1>
+        <h1>“冷门宝藏”挖掘分析</h1>
         <form action="/analyze" method="POST">
-            <label for="repo_name">请输入仓库名称 (格式: org/repo):</label><br><br>
-            <input type="text" id="repo_name" name="repo_name" required>
-            <button type="submit">获取分析报告</button>
+            <!-- 手动输入仓库名 -->
+            <label for="repo_name">通过仓库名查找:</label>
+            <input type="text" id="repo_name" name="repo_name" placeholder="输入仓库名 (如: org/repo)" required>
+
+            <!-- 新增提示文字 -->
+            <p>或通过以下分数指标查看推荐的冷门宝藏：</p>
+
+            <!-- 综合评分高的仓库 -->
+            <label for="top_weighted_dropdown">选择综合评分高的仓库:</label>
+            <select id="top_weighted_dropdown" onchange="setRepoName(this)">
+                <option value="">请选择</option>
+                {% for repo in grouped_repos[0] %}
+                    <option value="{{ repo.repo_name }}">{{ repo.repo_name }} (综合评分: {{ repo.weighted_score }})</option>
+                {% endfor %}
+            </select>
+
+            <!-- 复杂性评分高的仓库 -->
+            <label for="top_complexity_dropdown">选择复杂性评分高的仓库:</label>
+            <select id="top_complexity_dropdown" onchange="setRepoName(this)">
+                <option value="">请选择</option>
+                {% for repo in top_complexity %}
+                    <option value="{{ repo.repo_name }}">{{ repo.repo_name }} (复杂性评分: {{ repo.complexity_score }})</option>
+                {% endfor %}
+            </select>
+
+            <!-- 创新性评分高的仓库 -->
+            <label for="top_innovation_dropdown">选择创新性评分高的仓库:</label>
+            <select id="top_innovation_dropdown" onchange="setRepoName(this)">
+                <option value="">请选择</option>
+                {% for repo in top_innovation %}
+                    <option value="{{ repo.repo_name }}">{{ repo.repo_name }} (创新性评分: {{ repo.innovation_score }})</option>
+                {% endfor %}
+            </select>
+
+            <!-- 提交按钮 -->
+            <button type="submit">查看分析报告</button>
         </form>
     </div>
 
+    <div class="charts">
+        <h2>综合评分最高的仓库（轮播展示）</h2>
+        <canvas id="barChart"></canvas>
+    </div>
+
+    <!-- 左侧跳转链接 -->
+    <div class="links left-links">
+        <h3>高分冷门宝藏项目跳转链接</h3>
+        <ul id="leftLinks"></ul>
+    </div>
+
+    <!-- 右侧跳转链接 -->
+    <div class="links right-links">
+        <h3>高分冷门宝藏项目跳转链接</h3>
+        <ul id="rightLinks"></ul>
+    </div>
+
+    <!-- 复杂性评分柱状图 -->
+    <div class="charts">
+        <h2>复杂性评分最高的 10 个仓库</h2>
+        <canvas id="complexityBar"></canvas>
+    </div>
+
+    <!-- 创新性评分柱状图 -->
+    <div class="charts">
+        <h2>创新性评分最高的 10 个仓库</h2>
+        <canvas id="innovationBar"></canvas>
+    </div>
+
+    <script>
+        // 综合评分柱状图相关数据
+        const groupedRepos = {{ grouped_repos | tojson }};
+        const sourceLinks = {{ source_links | tojson }};
+        let currentGroupIndex = 0;
+
+        const ctx = document.getElementById('barChart').getContext('2d');
+        const barChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: groupedRepos[currentGroupIndex].map(repo => repo.repo_name),
+                datasets: [{
+                    label: '综合评分',
+                    data: groupedRepos[currentGroupIndex].map(repo => repo.weighted_score),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        function updateChart() {
+            const currentGroup = groupedRepos[currentGroupIndex];
+            barChart.data.labels = currentGroup.map(repo => repo.repo_name);
+            barChart.data.datasets[0].data = currentGroup.map(repo => repo.weighted_score);
+            barChart.update();
+
+            const leftLinks = document.getElementById('leftLinks');
+            const rightLinks = document.getElementById('rightLinks');
+            leftLinks.innerHTML = '';
+            rightLinks.innerHTML = '';
+
+            currentGroup.forEach(repo => {
+                const link = document.createElement('li');
+                link.innerHTML = `<a href="${sourceLinks[repo.repo_name]}" target="_blank">${repo.repo_name}</a>`;
+                if (leftLinks.childElementCount < 10) {
+                    leftLinks.appendChild(link);
+                } else {
+                    rightLinks.appendChild(link);
+                }
+            });
+        }
+
+        updateChart();
+        setInterval(() => {
+            currentGroupIndex = (currentGroupIndex + 1) % groupedRepos.length;
+            updateChart();
+        }, 5000);
+
+        // 复杂性评分柱状图
+        const complexityData = {{ top_complexity | tojson }};
+        const complexityCtx = document.getElementById('complexityBar').getContext('2d');
+        new Chart(complexityCtx, {
+            type: 'bar',
+            data: {
+                labels: complexityData.map(repo => repo.repo_name),
+                datasets: [{
+                    label: '复杂性评分',
+                    data: complexityData.map(repo => repo.complexity_score),
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // 创新性评分柱状图
+        const innovationData = {{ top_innovation | tojson }};
+        const innovationCtx = document.getElementById('innovationBar').getContext('2d');
+        new Chart(innovationCtx, {
+            type: 'bar',
+            data: {
+                labels: innovationData.map(repo => repo.repo_name),
+                datasets: [{
+                    label: '创新性评分',
+                    data: innovationData.map(repo => repo.innovation_score),
+                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
