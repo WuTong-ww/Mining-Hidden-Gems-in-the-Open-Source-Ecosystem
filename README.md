@@ -2,16 +2,25 @@
 
 ![Static Badge](https://img.shields.io/badge/Data-OpenDigger-blue)
 
-通过对开源项目的多维数据分析，挖掘那些质量高、创新性强但关注度较低的“冷门宝藏”项目，分析其受限原因，并提出提升曝光度的建议。
+“酒香也怕巷子深”。
 
-![展示图](img/523302cff15b31b2d2219f1b8d7c892.png)
-![展示图2](img/38be1b8c2e79bb1b3151cc617b6fe60.png)
+通过对开源项目的多维数据分析，挖掘那些**质量高**、**创新性强**但**关注度较低**的“冷门宝藏”项目，分析其受限原因，并提出提升曝光度的建议。
 
 ## :hand_with_index_finger_and_thumb_crossed: 项目成员
 
 - 吴彤[@WuTong-ww](https://github.com/WuTong-ww)：
 
 - 王惜冉[@irani0811](https://github.com/irani0811)：
+
+
+## :movie_camera:  部分界面展示
+
+- 点击观看演示视频
+[![视频](img/523302cff15b31b2d2219f1b8d7c892.png)](https://youtu.be/WWMmq2yTDMI&autoplay=1)
+
+- 结果界面部分展示
+![展示图2](img/38be1b8c2e79bb1b3151cc617b6fe60.png)
+
 
 ## :open_file_folder: 项目文件目录结构
 
