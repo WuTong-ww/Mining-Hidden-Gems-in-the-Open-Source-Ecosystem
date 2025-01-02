@@ -6,6 +6,23 @@
 
 通过对开源项目的多维数据分析，挖掘那些**质量高**、**创新性强**但**关注度较低**的“冷门宝藏”项目，分析其受限原因，并提出提升曝光度的建议。
 
+## 目录
+- [:hand_with_index_finger_and_thumb_crossed: 项目成员](#hand_with_index_finger_and_thumb_crossed-项目成员)
+- [:movie_camera: 部分界面展示](#movie_camera-部分界面展示)
+- [:open_file_folder: 项目文件目录结构](#open_file_folder-项目文件目录结构)
+- [:100: 分析逻辑](#100-分析逻辑)
+  - [:white_check_mark: 知名度得分](#white_check_mark-知名度得分)
+  - [:white_check_mark: 复杂度得分](#white_check_mark-复杂度得分)
+  - [:white_check_mark: 创新度得分](#white_check_mark-创新度得分)
+- [:sparkles: 生成结果报告和建议](#sparkles-生成结果报告和建议)
+- [:rocket: 运行](#rocket-运行)
+  - [克隆此仓库到本地](#克隆此仓库到本地)
+  - [将大模型缓存到本地](#将大模型缓存到本地)
+  - [安装依赖](#安装依赖)
+  - [启动后端](#启动后端)
+  - [打开浏览器](#打开浏览器)
+
+
 ## :hand_with_index_finger_and_thumb_crossed: 项目成员
 
 - 吴彤[@WuTong-ww](https://github.com/WuTong-ww)：
