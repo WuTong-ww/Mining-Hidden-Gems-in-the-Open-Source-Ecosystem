@@ -25,9 +25,9 @@
 
 ## :hand_with_index_finger_and_thumb_crossed: 项目成员
 
-- 吴彤[@WuTong-ww](https://github.com/WuTong-ww)：
+- 吴彤[@WuTong-ww](https://github.com/WuTong-ww)：制定评分标准，stars和fork获取，样本数据选取代码，流行分数评定代码，查找冷门仓库数据代码，创新度代码，后端代码大模型功能实现，前端部分响应。
 
-- 王惜冉[@irani0811](https://github.com/irani0811)：
+- 王惜冉[@irani0811](https://github.com/irani0811)：制定评分标准，readme文本获取，复杂度代码，创新度代码，数据清洗，综合评分计算代码，后端代码冷门原因分析，柱状图，词云图，仓库对应链接跳转功能实现，前端页面设计，css代码。
 
 
 ## :movie_camera:  部分界面展示
