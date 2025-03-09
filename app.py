@@ -222,7 +222,7 @@ def analyze():
             background_color=None,  # 透明背景
             mode="RGBA",
             colormap="viridis",
-            font_path="static/fonts/simhei.ttf"  # 指定支持中文的字体
+            #font_path="static/fonts/simhei.ttf"  # 指定支持中文的字体
         ).generate(readme_content)
         wordcloud.to_file(wordcloud_path)
 
