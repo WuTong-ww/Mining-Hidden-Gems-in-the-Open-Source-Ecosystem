@@ -2,15 +2,17 @@ import os
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
 from wordcloud import WordCloud
-from transformers import pipeline
 import matplotlib.pyplot as plt
+import requests
+import json
+import time
 
 app = Flask(__name__)
 
 # 加载数据
-total_data_path = 'total.csv'
-source_data_path = 'source.csv'
-readme_data_path = 'repo_readme_contents.csv'
+total_data_path = 'screen_data/total.csv'
+source_data_path = 'screen_data/source.csv'
+readme_data_path = 'screen_data/repo_readme_contents.csv'
 
 # 加载评分数据
 total_data = pd.read_csv(total_data_path, encoding='utf-8')
@@ -21,9 +23,9 @@ total_data.fillna(0, inplace=True)  # 填充缺失值为 0
 
 # 动态计算加权分数
 total_data['weighted_score'] = (
-    total_data['complexity_score'] +
-    total_data['innovation_score'] -
-    total_data['popularity_score']
+        total_data['complexity_score'] +
+        total_data['innovation_score'] -
+        total_data['popularity_score']
 )
 
 # 加载 README 数据
@@ -58,8 +60,71 @@ chart_path = os.path.join('static', 'top_projects_chart.png')
 plt.savefig(chart_path)
 plt.close()
 
-# 初始化文本生成模型
-generator = pipeline("text-generation", model="D:/Learning/MyCode/intro/model/gpt2", truncation=True)
+# 云端大模型API调用函数
+def call_cloud_llm(prompt, max_tokens=300, retry=3):
+    """
+    调用云端大语言模型API
+
+    Args:
+        prompt (str): 输入提示文本
+        max_tokens (int): 生成的最大token数
+        retry (int): 重试次数
+
+    Returns:
+        str: 模型生成的文本
+    """
+
+    # 明确指定API配置信息
+    api_key = os.getenv("CLOUD_LLM_API_KEY", "xxx")  # 实际使用时替换为您的API密钥
+    api_url = "https://chat.ecnu.edu.cn/open/api/v1/chat/completions"  # 明确指定URL
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    # API请求数据
+    data = {
+        "model": "ecnu-max",  # 直接明确指定使用ecnu-max模型
+        "messages": [
+            {
+                "role": "system",
+                "content": "你是一名代码分析专家，擅长分析开源项目并提供改进建议。请根据用户提供的项目信息，分析项目流行度低的原因并给出优化建议。"
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        "temperature": 0.5,
+        "max_tokens": max_tokens,
+        "top_p": 0.9
+    }
+
+    # 重试机制
+    for attempt in range(retry):
+        try:
+            response = requests.post(
+                api_url,
+                headers=headers,
+                json=data,
+                timeout=15
+            )
+
+            if response.status_code == 200:
+                result = response.json()
+                return result['choices'][0]['message']['content']
+            else:
+                print(f"API请求失败，尝试 {attempt + 1}/{retry}，状态码：{response.status_code}")
+                print(f"响应内容：{response.text}")
+                time.sleep(1)  # 失败后短暂延迟再重试
+
+        except Exception as e:
+            print(f"API调用异常 (尝试 {attempt + 1}/{retry})：{str(e)}")
+            time.sleep(2)  # 异常后稍长延迟再重试
+
+    return "分析服务暂时不可用，请稍后再试。"
+
 
 @app.route('/')
 def index():
@@ -102,7 +167,6 @@ def index():
         top_complexity_dropdown=top_complexity_dropdown,  # 复杂性评分前 10 名，用于下拉框
         top_innovation_dropdown=top_innovation_dropdown  # 创新性评分前 10 名，用于下拉框
     )
-
 
 
 @app.route('/analyze', methods=['POST'])
@@ -186,26 +250,23 @@ def analyze():
     if complexity > 70:
         optimization_suggestions.append("优化项目结构，降低复杂性，让新手更容易上手。")
 
-    # 构建模型输入文本
+    # 构建模型输入文本（中文版）
     prompt = f"""
-        Below is the README content of an open-source project along with its rating information (innovation, complexity, popularity). Please analyze the reasons for its low popularity and provide corresponding optimization suggestions based on these details:\n\n
-        Project README:\n{readme_content}\n\n
-        Project Ratings:\n
-        Innovation Rating: {innovation}\n
-        Complexity Rating: {complexity}\n
-        Popularity Rating: {popularity}\n\n
-        Please output the results in the following format:\n
-        1. Reasons for low popularity:\n
-        2. Optimization suggestions for the project:\n
-        3. README improvement suggestions:\n
+        以下是一个开源项目的README内容以及其评分信息（创新性、复杂性、流行度）。请分析该项目流行度较低的原因，并根据这些详细信息提供相应的优化建议：\n\n
+        项目README内容：\n{readme_content}\n\n
+        项目评分：\n
+        创新性评分：{innovation}\n
+        复杂性评分：{complexity}\n
+        流行度评分：{popularity}\n\n
+        请按照以下格式输出结果：\n
+        1. 流行度低的原因：\n
+        2. 项目优化建议：\n
+        3. README改进建议：\n
     """
 
     try:
-        # 生成分析报告
-        response = generator(prompt, max_length=500, num_return_sequences=1, do_sample=True, top_k=50, top_p=0.95)
-        analysis_result = response[0]['generated_text'] if response else "生成失败，请检查输入或 API 设置。"
-        if prompt in analysis_result:
-            analysis_result = analysis_result.replace(prompt, '').strip()
+        # 调用云端大模型API替代本地模型
+        analysis_result = call_cloud_llm(prompt, max_tokens=500, retry=3)
     except Exception as e:
         analysis_result = f"生成失败：{e}"
 
@@ -243,6 +304,7 @@ def analyze():
     #     'optimization_suggestions': optimization_suggestions,
     #     'scores': scores
     # })
+
 
 if __name__ == '__main__':
     app.run(debug=True)
