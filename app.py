@@ -85,7 +85,7 @@ def call_cloud_llm(prompt, max_tokens=300, retry=3):
 
     # API请求数据
     data = {
-        "model": "ecnu-max",  # 直接明确指定使用ecnu-max模型
+        "model": "ecnu-plus",  # 直接明确指定使用ecnu-plus模型
         "messages": [
             {
                 "role": "system",
