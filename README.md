@@ -1,4 +1,4 @@
-# Openrank参赛——开源生态系统中的“冷门宝藏”挖掘
+# 开源生态系统中的“冷门宝藏”挖掘
 
 ![Static Badge](https://img.shields.io/badge/Data-OpenDigger-blue) ![Model: GPT-2](https://img.shields.io/badge/Model-GPT--2-green) ![Flask](https://img.shields.io/badge/Framework-Flask-blue)
 
